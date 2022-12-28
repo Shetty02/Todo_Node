@@ -27,10 +27,10 @@ mongoose.connect(mongoURI,{
     useUnifiedTopology: true   
 })
 .then((res)=>{
-    // console.log("Successfully Connected to DB");
+    console.log("Successfully Connected to DB");
 })
 .catch((err)=>{
-    // console.log("Failed to Connect", err);
+    console.log("Failed to Connect", err);
 })
 
 // MiddleWares.

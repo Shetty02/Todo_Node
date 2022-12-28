@@ -1,0 +1,27 @@
+Day-1
+1) Created an ejs Template for Register and Login.
+2)Hashed Password.
+3)Created a MongoDB Connection.
+4)User Schema
+
+MongoDB 
+userName:Nehal Shetty
+pswd:12345
+
+Day-2 lecture-07
+1)completed registration part.
+2) login part
+3)validate the data.
+4)find user either using mail or username.
+5)for found user matched the password
+6)Include session info for further check.
+7) adding session on the database.
+=>dashboard template.
+=>logout and logout from all devices.
+=>isAuth
+
+Day-3
+=>create item, edit item and delete item
+=>Axios package.
+=>browser 
+=>pagination and rate limiting.

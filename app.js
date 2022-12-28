@@ -59,7 +59,7 @@ app.get("/", (req,res) =>{
 })
 
 app.get("/login", (req,res)=>{
-    return res.render("Login");
+    return res.render("login");
 })
 app.post("/login", async(req,res)=>{
     console.log(req.body)
@@ -323,7 +323,7 @@ app.post("/delete-item", isAuth, async(req, res)=>{
     }
 })
 app.get("/register", (req,res)=>{
-    return res.render("Register");
+    return res.render("register");
 })
 app.post("/register", async (req,res)=>{
     console.log(req.body);

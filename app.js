@@ -62,6 +62,78 @@ app.get("/", (req,res) =>{
 app.get("/login", (req,res)=>{
     return res.render("login");
 })
+app.get("/register", (req,res)=>{
+    return res.render("register");
+})
+app.post("/register", async (req,res)=>{
+    // console.log(req.body);
+    const {name, email, username, password} = req.body;
+    try{
+        await cleanUpAndValidate({name, email, username, password});
+    }
+    catch(err){
+        return res.send({
+            status:400,
+            message: err
+        })
+    }
+
+    // abc123 ==> sadfjdj@@#14
+    // bcrypt use md5
+    const hashedPassword = await bcrypt.hash(password, 7);
+    // console.log(hashedPassword);
+
+    // insert the data
+    let user = new UserSchema({
+        name: name,
+        username: username,
+        password: hashedPassword,
+        email: email,
+    });
+    // console.log(user)
+
+    // Checking if user Exits.
+    let userExists;
+    try{
+        userExists = await UserSchema.findOne({ email });
+    }
+    catch(err){
+        return res.send({
+            status:400,
+            message:"Internal server Error. Please try again",
+            error: err
+        });
+    }
+    if(userExists){
+        return res.send({
+            status:400,
+            message:"User already exists",
+        });
+    }
+    try{
+        const userDB = await user.save(); //Create a operations in DataBase.
+        // console.log(userDB);
+        res.redirect("/login")
+        // return res.send({
+        //     status:201,
+        //     message:"Register Successfully",
+        //     data:{
+        //         _id:userDB._id,
+        //         username:userDB.username,
+        //         email: userDB.email
+        //     },
+        // });
+    }
+    catch(err){
+        return res.send({
+            status:400,
+            message:"Internal Server Error, Please try again",
+            error:err
+        });
+    }
+   
+})
+
 app.post("/login", async(req,res)=>{
     // console.log(req.body)
     const {loginId, password} = req.body;
@@ -322,77 +394,6 @@ app.post("/delete-item", isAuth, async(req, res)=>{
             error:err
         })
     }
-})
-app.get("/register", (req,res)=>{
-    return res.render("register");
-})
-app.post("/register", async (req,res)=>{
-    // console.log(req.body);
-    const {name, email, username, password} = req.body;
-    try{
-        await cleanUpAndValidate({name, email, username, password});
-    }
-    catch(err){
-        return res.send({
-            status:400,
-            message: err
-        })
-    }
-
-    // abc123 ==> sadfjdj@@#14
-    // bcrypt use md5
-    const hashedPassword = await bcrypt.hash(password, 7);
-    // console.log(hashedPassword);
-
-    // insert the data
-    let user = new UserSchema({
-        name: name,
-        username: username,
-        password: hashedPassword,
-        email: email,
-    });
-    // console.log(user)
-
-    // Checking if user Exits.
-    let userExists;
-    try{
-        userExists = await UserSchema.findOne({ email });
-    }
-    catch(err){
-        return res.send({
-            status:400,
-            message:"Internal server Error. Please try again",
-            error: err
-        });
-    }
-    if(userExists){
-        return res.send({
-            status:400,
-            message:"User already exists",
-        });
-    }
-    try{
-        const userDB = await user.save(); //Create a operations in DataBase.
-        // console.log(userDB);
-        res.redirect("/login")
-        // return res.send({
-        //     status:201,
-        //     message:"Register Successfully",
-        //     data:{
-        //         _id:userDB._id,
-        //         username:userDB.username,
-        //         email: userDB.email
-        //     },
-        // });
-    }
-    catch(err){
-        return res.send({
-            status:400,
-            message:"Internal Server Error, Please try again",
-            error:err
-        });
-    }
-   
 })
 
 const PORT = process.env.PORT || 8000;

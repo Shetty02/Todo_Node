@@ -27,10 +27,10 @@ mongoose.connect(mongoURI,{
     useUnifiedTopology: true   
 })
 .then((res)=>{
-    console.log("Successfully Connected to DB");
+    // console.log("Successfully Connected to DB");
 })
 .catch((err)=>{
-    console.log("Failed to Connect", err);
+    // console.log("Failed to Connect", err);
 })
 
 // MiddleWares.
@@ -56,13 +56,14 @@ app.use(
 // Routes.
 app.get("/", (req,res) =>{
     res.send("Welcome to my App");
+    req.redirect("/register")
 })
 
 app.get("/login", (req,res)=>{
-    return res.render("Login");
+    return res.render("login");
 })
 app.post("/login", async(req,res)=>{
-    console.log(req.body)
+    // console.log(req.body)
     const {loginId, password} = req.body;
     if (
       typeof loginId != "string" ||
@@ -86,7 +87,7 @@ app.post("/login", async(req,res)=>{
         else{
             userDB = await UserSchema.findOne({ username: loginId})
         }
-        console.log(userDB);
+        // console.log(userDB);
 
         if(!userDB){
             return res.send({
@@ -154,7 +155,7 @@ app.post("/logout", isAuth, (req,res)=>{
     })
 }); 
 app.post("/logout_from_all_devices", isAuth, async(req,res)=>{
-    console.log(req.session.user.username);
+    // console.log(req.session.user.username);
     const username = req.session.user.username;
     const Schema = mongoose.Schema;
     const sessionSchema = new Schema({_id:String},{strict: false});
@@ -164,7 +165,7 @@ app.post("/logout_from_all_devices", isAuth, async(req,res)=>{
         const sessionDB = await sessionModel.deleteMany({
             "session.user.username": username
         })
-        console.log(sessionDB)
+        // console.log(sessionDB)
         return res.send({
             status:200,
             message:"Logout from all devices" 
@@ -230,7 +231,7 @@ app.post("/pagination_dashboard", isAuth, async(req, res)=>{
 })
 
 app.post("/create-item", isAuth, rateLimiting, async(req, res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     const todoText = req.body.todo;
     if(!todoText){
         return res.send({
@@ -323,10 +324,10 @@ app.post("/delete-item", isAuth, async(req, res)=>{
     }
 })
 app.get("/register", (req,res)=>{
-    return res.render("Register");
+    return res.render("register");
 })
 app.post("/register", async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     const {name, email, username, password} = req.body;
     try{
         await cleanUpAndValidate({name, email, username, password});
@@ -341,7 +342,7 @@ app.post("/register", async (req,res)=>{
     // abc123 ==> sadfjdj@@#14
     // bcrypt use md5
     const hashedPassword = await bcrypt.hash(password, 7);
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
 
     // insert the data
     let user = new UserSchema({
@@ -372,16 +373,17 @@ app.post("/register", async (req,res)=>{
     }
     try{
         const userDB = await user.save(); //Create a operations in DataBase.
-        console.log(userDB);
-        return res.send({
-            status:201,
-            message:"Register Successfully",
-            data:{
-                _id:userDB._id,
-                username:userDB.username,
-                email: userDB.email
-            },
-        });
+        // console.log(userDB);
+        res.redirect("/login")
+        // return res.send({
+        //     status:201,
+        //     message:"Register Successfully",
+        //     data:{
+        //         _id:userDB._id,
+        //         username:userDB.username,
+        //         email: userDB.email
+        //     },
+        // });
     }
     catch(err){
         return res.send({
